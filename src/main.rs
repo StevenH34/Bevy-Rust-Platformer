@@ -1,9 +1,6 @@
 use bevy::{prelude::*, render::camera::ScalingMode};
 
-#[derive(Component)]
-pub struct Player {
-    pub speed: f32,
-}
+pub mod player;
 
 fn main() {
     App::new()
@@ -21,8 +18,8 @@ fn main() {
                 })
                 .build(),
         )
+        .add_systems(Update, player::player_movement)
         .add_systems(Startup, setup)
-        .add_systems(Update, character_movment)
         .run();
     
 }
@@ -37,37 +34,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands.spawn(camera);
 
-    let texture = asset_server.load("test-character.png");
+    let texture = asset_server.load("rick.png");
 
-    commands.spawn((
-        SpriteBundle {
+    commands.spawn(SpriteBundle {
             texture,
-            ..default()
-        },
-        Player { speed: 100.0 }
-    ));
+            ..default()})
+    .insert(player::Player{ speed: 100.0});
 }
-
-fn character_movment(
-    mut characters: Query<(&mut Transform, &Player)>,
-    input: Res<Input<KeyCode>>,
-    time: Res<Time>,
-) {
-    for (mut transform, player) in &mut characters {
-        let movement_amount = player.speed * time.delta_seconds();
-
-        if input.pressed(KeyCode::W) {
-            transform.translation.y += movement_amount;
-        }
-        if input.pressed(KeyCode::S) {
-            transform.translation.y -= movement_amount;
-        }
-        if input.pressed(KeyCode::D) {
-            transform.translation.x += movement_amount;
-        }
-        if input.pressed(KeyCode::A) {
-            transform.translation.x -= movement_amount;
-        }
-    }
-}
-
