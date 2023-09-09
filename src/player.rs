@@ -20,9 +20,11 @@ pub fn player_movement(
             transform.translation.y -= movement_amount;
         }
         if input.pressed(KeyCode::D) {
+            transform.rotation = Quat::default();
             transform.translation.x += movement_amount;
         }
         if input.pressed(KeyCode::A) {
+            transform.rotation = Quat::from_rotation_y(std::f32::consts::PI);
             transform.translation.x -= movement_amount;
         }
     }
